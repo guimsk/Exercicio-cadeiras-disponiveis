@@ -1,0 +1,455 @@
+import java.util.Scanner;
+
+public class bancos
+
+{
+    public static void main (String[]args)
+    {
+        Scanner Teclado =  new Scanner (System.in);
+
+        String pergunta_0 =  " "; //pergunta para as opções
+        double Cadeira_ocupada = 0; //Cadeiras ocupadas contagem
+        double Cadeira_desocupada = 0;//Cadeiras desocupadas contagem
+
+        boolean Erro = true; //caso der um erro na seleção de resposta
+        int Faturamento = 0; //faturamento soma
+
+        boolean Repetir = false;// da erro de escolha caso não encontrar uma cadeira igual a digitação
+
+        String Coordenadas[] = {" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R"}; //As letras das coordenadas
+
+        String cadeiras[][] = new String[30][30]; //Cadeiras String
+
+
+        boolean cadeiras_Ocupadas [][] = new boolean [30][30]; //false = desocupado True = Ocupado
+        boolean cadeiras_Comuns [][] = new boolean [30][30];  //false = Premium True = Comum
+        boolean cadeiras_Cadeirantes [][] = new boolean [30][30];  //false = Normal True = Preferencial
+
+
+        Organizar (Coordenadas ,  cadeiras , cadeiras_Ocupadas,  cadeiras_Comuns, cadeiras_Cadeirantes); //organização da matriz das cadeiras
+
+        while (pergunta_0.equalsIgnoreCase("6")) //seleção poara fim do programa
+        {
+            Erro = true;  //caso der um erro na seleção de resposta
+
+            System.out.println();
+            System.out.println("Você usuário, gostaria de fazer:");
+            System.out.println();
+            System.out.println("[1] - Ver cadeiras disponíveis.");
+            System.out.println("[2] - Exibir estatísticas.");
+            System.out.println("[3] - Reservar o primeiro assento disponível.");
+            System.out.println("[4] - Reservar um assento.");
+            System.out.println("[5] - Liberar uma reserva.");
+            System.out.println("[6] - Desligar o programa.");
+
+            System.out.println();
+            System.out.println("Cadeiras Status: ");
+            System.out.println("L - Livre.");
+            System.out.println("O - Ocupada.");
+            System.out.println();
+
+            System.out.println("(P - Premium) Preço: R$100. ");
+            System.out.println("(C - Comum) Preço: R$60.");
+            System.out.println("(D - Deficientes Físicos) Preço: R$50.");
+            System.out.println();
+
+            pergunta_0 =  Teclado.nextLine();
+
+            if ( pergunta_0.equalsIgnoreCase("1")) //imprimir o mapa compĺeto
+            {
+                Mapa (Coordenadas ,  cadeiras , cadeiras_Ocupadas,  cadeiras_Comuns, cadeiras_Cadeirantes);
+                Erro = false;  //caso der certo a seleção de resposta
+            }
+            else if (pergunta_0.equalsIgnoreCase("2")) //mostrar statisticas de preço atual e quantidade de cadeiras ocupadas/desocupadas
+            {
+                Statisticas (Coordenadas, cadeiras, cadeiras_Ocupadas, cadeiras_Comuns, cadeiras_Cadeirantes, Faturamento, Cadeira_ocupada, Cadeira_desocupada);
+                Erro = false;//caso der certo a seleção de resposta
+            }
+            else if (pergunta_0.equalsIgnoreCase("3"))//ver a primeira cadeira liberada e reserva-la
+            {
+                Reserva_primeiro (Coordenadas, cadeiras, cadeiras_Ocupadas, cadeiras_Comuns, cadeiras_Cadeirantes, Erro);
+                Erro = false;//caso der certo a seleção de resposta
+            }
+
+            else if (pergunta_0.equalsIgnoreCase("4"))//escolher uma cadeira para reservar
+            {
+                Reservar (Coordenadas, cadeiras, cadeiras_Ocupadas, cadeiras_Comuns, cadeiras_Cadeirantes, Erro);
+                Erro = false;//caso der certo a seleção de resposta
+            }
+            else if (pergunta_0.equalsIgnoreCase("5"))//escolher uma cadeira para liberar a reserva
+            {
+                Liberar (Coordenadas, cadeiras, cadeiras_Ocupadas, cadeiras_Comuns, cadeiras_Cadeirantes, Erro);
+                Erro = false;//caso der certo a seleção de resposta
+            }
+            else if (Erro == true)//caso der um erro na seleção de resposta, ex: selecionar algo sem opção
+            { 
+                System.out.println();
+                System.out.println("Erro ao escolher as opções, Favor tentar novamente.");
+                System.out.println();
+            }
+        }
+    }
+
+    public static void Organizar (String [] Coordenadas, String [][] cadeiras, boolean [][] cadeiras_Ocupadas, boolean [][] cadeiras_Comuns, boolean [][] cadeiras_Cadeirantes)
+    {
+        for (int linha= 0; linha<=18; linha++) // ler cada parte da matriz cadeiras e muda-las
+        {
+            for (int coluna= 1; coluna<=22; coluna++)// ler cada parte da matriz cadeiras e muda-las
+            {
+                if ((linha == 0)&&( linha <23)) 
+                {
+                    if (coluna < 10) //numeros com adição do 0 (antes do 10)
+                    {
+                        cadeiras[linha][coluna] = (" 0"+ coluna +"      ");
+                    }
+                    else if (coluna>=10)//numeros sem adição do 0 (do 10 em diante)
+                    {
+                        cadeiras[linha][coluna] = (" "+ coluna +"      ");
+                    }
+                }
+                else if ((coluna>=14)&&(coluna<=18)&&(linha==13)) //espaço em branco da linha M
+                {
+                    cadeiras[linha][coluna] = ("         ");    
+                }
+                else if ((coluna == 5)&&(linha==13)) //espaço em branco da linha M
+                {
+                    cadeiras[linha][coluna] = ("         ");    
+                }
+                else if ((coluna>=14)&&(coluna<=18)&&(linha==12)) //Espaço em branco da linha L
+                {
+                    cadeiras[linha][coluna] = ("         ");     
+                }
+                else if ((coluna>=8)&&(coluna<=15)&&(linha==18)) //Espaço em branco da linha L
+                {
+                    if ((coluna==11)&&(linha==18)) //Escrever Balcony
+                    {
+                        cadeiras[linha][coluna] = ("     BAL");    
+                    }
+                    else if ((coluna==12)&&(linha==18)) //Escrever Balcony
+                    {
+                        cadeiras[linha][coluna] = ("CONY      ");    
+                    }
+                    else{
+                        cadeiras[linha][coluna] = ("         ");     //Espaço em branco linha 18
+                    }
+                }
+                else 
+                {
+                    if ((coluna>=0)&&(linha>0))
+                    {
+                        if (coluna < 10)
+                        {
+                            cadeiras[linha][coluna] =  Coordenadas[linha]+"0"+Integer.toString(coluna); //numeros com adição do 0 (antes do 10)
+                        }
+                        else if (coluna>=10)
+                        {
+                            cadeiras[linha][coluna] =  Coordenadas[linha]+Integer.toString(coluna);//numeros sem adição do 0 (do 10 em diante)
+                        } 
+                    }
+                }
+            }
+        }
+
+        for (int linha= 0; linha<=18; linha++) //Mudar, mostrando quais que estao Comum
+        {
+            for (int coluna= 1; coluna<=22; coluna++)
+            {
+                if (((coluna>=1)&&(coluna<=4)&&(linha==1))||((coluna>=19)&&(coluna<=21)&&(linha==1))) //Comum linha A
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else if (((coluna>=1)&&(coluna<=4)&&(linha==2))||((coluna>=19)&&(coluna<=21)&&(linha==2)))//Comum linha B
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else  if (((coluna>=1)&&(coluna<=2)&&(linha==3))||((coluna>=21)&&(coluna<=21)&&(linha==3)))//Comum linha C
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else if (linha == 11)//Comum linha K
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else if (((coluna>=1)&&(coluna<=13)&&(linha==12)))//Comum linha L
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else if (((coluna>=19)&&(coluna<=22)&&(linha==12)))//Comum linha L
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else if (((coluna>=6)&&(coluna<=13)&&(linha==13)))//Comum linha M
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else if (linha == 17)//Comum linha Q
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+                else  if (((coluna>=1)&&(coluna<=7)&&(linha==18))||((coluna>=16)&&(coluna<=21)&&(linha==18)))//Comum linha R
+                {
+                    cadeiras_Comuns [linha][coluna] = true;
+                }
+            }
+        }
+
+        for (int linha= 1; linha<=18; linha++) //Mudar, mostrando quais que estao para Deficientes Físicos
+        {
+            for (int coluna= 0; coluna<=22; coluna++)
+            {
+                if (((coluna>=1)&&(coluna<=5)&&(linha==13))||((coluna>=19)&&(coluna<=22)&&(linha==13)))//Cadeirante linha R
+                {
+                    cadeiras_Cadeirantes [linha][coluna] = true;
+                }
+            }
+        }
+    }
+
+    public static void Mapa (String [] Coordenadas, String [][] cadeiras, boolean [][] cadeiras_Ocupadas, boolean [][] cadeiras_Comuns, boolean [][] cadeiras_Cadeirantes)
+    {
+        for (int linha= 0; linha<=18; linha++) //Mostrar as cadeiras ao comprador 
+        {
+            System.out.print(Coordenadas[linha]+" ");
+            for (int coluna= 1; coluna<=22; coluna++)
+            { 
+                if ((linha == 0)&&( linha <23)) //Numneros sozinhos
+                {
+                    System.out.print(cadeiras[linha][coluna]);
+                }
+                else if ((coluna>=14)&&(coluna<=18)&&(linha==13)) //espaço em branco da linha M
+                {
+                    System.out.print(cadeiras[linha][coluna]);
+                }
+                else if ((coluna==5)&&(linha==13)) //espaço em branco da linha M
+                {
+                    System.out.print(cadeiras[linha][coluna]);
+                }
+                else if ((coluna>=14)&&(coluna<=18)&&(linha==12)) //Espaço em branco da linha L
+                {
+                    System.out.print(cadeiras[linha][coluna]);
+                }
+
+                else if ((coluna>=8)&&(coluna<=15)&&(linha==18)) //Espaço em branco da linha L
+                {
+                    System.out.print(cadeiras[linha][coluna]);
+                }
+                else if((cadeiras_Comuns [linha][coluna] == false) && (cadeiras_Cadeirantes [linha][coluna] == false)) //somente cadeiras Premium
+                {
+                    if (cadeiras_Ocupadas [linha][coluna ] == false)
+                    {
+                        System.out.print(cadeiras[linha][coluna]+"(P-L) "); //imprimir a coordenada com Premium, Livre
+                    }
+                    else if (cadeiras_Ocupadas [linha][coluna ] == true)
+                    {
+                        System.out.print(cadeiras[linha][coluna]+"(P-O) "); //imprimir a coordenada com Premium, Ocupado
+                    }
+                }
+
+                else if((cadeiras_Comuns [linha][coluna] == true) && (cadeiras_Cadeirantes [linha][coluna] == false))  //somente cadeiras Comuns
+                {
+                    if (cadeiras_Ocupadas [linha][coluna ] == false)
+                    {
+                        System.out.print(cadeiras[linha][coluna]+"(C-L) ");  //imprimir a coordenada com Comum, Livre
+                    }
+                    else if (cadeiras_Ocupadas [linha][coluna ] == true)
+                    {
+                        System.out.print(cadeiras[linha][coluna]+"(C-O) "); //imprimir a coordenada com Comum, Ocupado
+                    }          
+                }
+                else if((cadeiras_Comuns [linha][coluna] == false) && (cadeiras_Cadeirantes [linha][coluna] == true)) //somente cadeiras para Deficientes
+                {
+                    if (cadeiras_Ocupadas [linha][coluna ] == false)
+                    {
+                        System.out.print(cadeiras[linha][coluna]+"(D-L) "); //imprimir a coordenada com Cadeira para Deficiente, Livre
+                    }
+                    else if (cadeiras_Ocupadas [linha][coluna ] == true)
+                    {
+                        System.out.print(cadeiras[linha][coluna]+"(D-O) "); //imprimir a coordenada com Cadeira para Deficiente, Ocupado
+                    }        
+                }
+            }
+            System.out.println(); //ENTER
+
+            if (linha ==13) //separação (corredor)
+            {
+                System.out.println();
+                System.out.println();
+            }
+        }
+    }
+
+    public static void Statisticas (String [] Coordenadas, String [][] cadeiras, boolean [][] cadeiras_Ocupadas, boolean [][] cadeiras_Comuns, boolean [][] cadeiras_Cadeirantes, int Faturamento, double  Cadeira_ocupada,  double  Cadeira_desocupada)
+    {
+        for (int linha= 1; linha<=18; linha++) //conferir se a cadeira selecionada existe
+        {
+            for (int coluna= 1; coluna<=22; coluna++)
+            {
+                if(cadeiras_Ocupadas [linha ][coluna ] == true) //caso a cadeira está disponivel
+                {
+                    if  ((cadeiras_Comuns [linha][coluna] == true)&&(cadeiras_Cadeirantes [linha][coluna] == false)) //Faturamento caso a cadeira for Comum
+                    {
+                        Faturamento = Faturamento + 60;//aumento da soma da fatura
+                    }
+                    else if  ((cadeiras_Comuns [linha][coluna] == false)&&(cadeiras_Cadeirantes [linha][coluna] == true))//Faturamento caso a cadeira for Premium
+                    {
+                        Faturamento = Faturamento + 50;//aumento da soma da fatura
+                    }
+                    else if  ((cadeiras_Comuns [linha][coluna] == false)&&(cadeiras_Cadeirantes [linha][coluna] == false))//Faturamento caso a cadeira for para Deficientes
+                    {
+                        Faturamento = Faturamento + 100;//aumento da soma da fatura
+                    }
+                    Cadeira_ocupada++;//aumento da soma de cadeiras ocupadas
+                }
+                else if (cadeiras_Ocupadas [linha ][coluna ] == false)
+                {
+                    Cadeira_desocupada++;//aumento da soma de cadeiras desocupadas
+                }
+            }
+        }
+        System.out.println("O faturamento atual é de: "+  Faturamento+".");
+        System.out.println("No momento, se tem " + Cadeira_ocupada+" cadeiras ocupadas e "+Cadeira_desocupada+" cadeiras desocupadas, de "+ (Cadeira_desocupada + Cadeira_ocupada)+" cadeiras totais.");
+        System.out.printf("Sendo,  %.2f porcento das cadeiras estão desocupadas.",((Cadeira_desocupada * 100)/(Cadeira_ocupada+Cadeira_desocupada)));
+        System.out.printf("Sendo,  %.2f porcento das cadeiras estão ocupadas.",((Cadeira_ocupada * 100)/(Cadeira_ocupada+Cadeira_desocupada)));
+        System.out.println();
+    }
+
+    public static void Reserva_primeiro (String [] Coordenadas, String [][] cadeiras, boolean [][] cadeiras_Ocupadas, boolean [][] cadeiras_Comuns, boolean [][] cadeiras_Cadeirantes, boolean Erro)
+    {
+        while (Erro == true)
+        {
+            for (int linha = 1; linha<=18; linha++) //conferir a primeira cadeira selecionada Livre
+            {
+                for (int coluna = 1; coluna <=22; coluna++) 
+                {
+                    if(cadeiras_Ocupadas [linha ][coluna ] == false) //caso a cadeira está disponivel
+                    {
+                        cadeiras_Ocupadas [linha][coluna ] = true; //muda para ficar indisponível
+                        System.out.println("A cadeira "+  cadeiras [linha][coluna] + " foi reservada com sucesso");//mostrar qual foi encontrado
+                        System.out.println();
+                        linha = 18;//acabar a busca (for)
+                        coluna = 22;//acabar a busca (for)
+                        Erro = false;//caso encontre um assento disponivel
+                    }
+                }
+            }
+            if (Erro == true) //caso não encontre um assento disponivel
+            {
+                System.out.println("Desculpe, mas não há mais assentos disponiveis, tente novamente em outra ocasião.");
+                Erro = false;//parar a repetição do while
+            }
+        }
+    } 
+
+    public static void Reservar (String [] Coordenadas, String [][] cadeiras, boolean [][] cadeiras_Ocupadas, boolean [][] cadeiras_Comuns, boolean [][] cadeiras_Cadeirantes, boolean Erro)
+    {
+        while (Erro == true)
+        {
+            Scanner Teclado =  new Scanner (System.in);
+            System.out.println();
+            System.out.println("Qual a cadeira desejada entre as disponíveis? Escreva sua coordenada: ");//perguntar após mostras as opções
+            String Cadeira =  Teclado.next().trim();
+            System.out.println();
+            boolean denovo = false;
+
+            for (int linha= 1; linha<=18; linha++) //conferir se a cadeira selecionada existe
+            {
+                for (int coluna= 1; coluna<=21; coluna++)
+                {
+                    if (cadeiras[linha][coluna].equalsIgnoreCase(Cadeira)) //usado para evitar erros na seleção
+                    {
+                        if (cadeiras_Cadeirantes [linha][coluna] == true) //caso for cadeira de cadeirante, a escolhida
+                        {
+                            System.out.println();
+                            System.out.println("Qual a cadeira a ser reservada é de uso exclusivo a cadeirantes, Favor confirmar escolha:"); //perguntar após mostras as opções
+                            System.out.println("[1] - Confirmo que a pessoa que irá usar a cadeira é cadeirante."); //Caso a pessoa a usar a cadeira seja cadeirante
+                            System.out.println("[2] - Irei escolher outra cadeira."); //Caso a pessoa a usar a cadeira não seja cadeirante
+
+                            int pergunta_0 =  Teclado.nextInt();
+                            System.out.println();
+
+                            if (pergunta_0 == 1) //Caso a pessoa seja deficiente
+                            {
+                                if(cadeiras_Ocupadas [linha ][coluna ] == false) //caso a cadeira está disponivel
+                                {
+                                    cadeiras_Ocupadas [linha][coluna ] = true; //muda para ficar indisponível
+                                    System.out.println("A cadeira desejada foi reservada com sucesso");
+                                    Erro = false;//caso encontre um assento disponivel
+                                }
+                                else if (cadeiras_Ocupadas[linha ][coluna ] == true) //caso a cadeira ja está alugada
+                                {
+                                    System.out.println("Desculpe, mas a cadeira selecionada ja está reservada");
+                                    Erro = false;//caso encontre um assento disponivel
+                                }
+                            }
+                            else if (pergunta_0 == 2) //caso a pessoa não seja deficiente
+                            {
+                                denovo = true;//repetir o processo de escolha, caso a pessoa escolha 2
+                                Erro = false;//caso encontre um assento disponivel
+                            }
+                        }
+                        else if (cadeiras_Cadeirantes [linha][coluna] == false) //caso o assento não for para cadeirante
+                        {
+                            if(cadeiras_Ocupadas [linha ][coluna ] == false) //caso a cadeira está disponivel
+                            {
+                                cadeiras_Ocupadas [linha][coluna ] = true; //muda para ficar indisponível
+                                System.out.println("A cadeira desejada foi reservada com sucesso");
+                                Erro = false;//caso encontre um assento disponivel
+                            }
+                            else if (cadeiras_Ocupadas[linha ][coluna ] == true) //caso a cadeira ja está alugada
+                            {
+                                System.out.println("Desculpe, mas a cadeira selecionada ja está reservada");
+                                Erro = false;//caso encontre um assento disponivel
+                            }
+                        }
+                    }
+                }
+            }
+            if (Erro == true)//caso não encontre um assento disponivel
+            {
+                System.out.println("Desculpe, mas as coordenadas desejadas não existem, tente novamente.");
+            }
+            else if (denovo == true)//encontre um assento disponivel, mas seja de deficiente e a pessoa escolha 2
+            {
+                Erro= true; //repetir o processo de escolha, caso a pessoa escolha 2
+                System.out.println("Por favor escolha outra cadeira");
+            }
+        }
+    }
+
+    public static void Liberar (String [] Coordenadas, String [][] cadeiras, boolean [][] cadeiras_Ocupadas, boolean [][] cadeiras_Comuns, boolean [][] cadeiras_Cadeirantes, boolean Erro)
+    {
+        while (Erro == true)
+        {
+            Scanner Teclado =  new Scanner (System.in);
+
+            System.out.println();
+            System.out.println("Qual a cadeira a ser liberada entre as reservadas? Escreva sua coordenada: ");//perguntar após mostras as opções
+            String Cadeira =  Teclado.next().trim();
+            System.out.println();
+            for (int linha= 1; linha<=18; linha++) //conferir se a cadeira selecionada existe
+            {
+                for (int coluna= 1; coluna<=22; coluna++)
+                {
+                    if (cadeiras[linha][coluna].equalsIgnoreCase(Cadeira)) //usado para evitar erros na seleção
+                    {
+                        if(cadeiras_Ocupadas [linha ][coluna ] == true ) //caso a cadeira está disponivel
+                        {
+                            cadeiras_Ocupadas[linha][coluna ] = false; //muda para ficar indisponível
+                            System.out.println("A cadeira desejada foi liberada com sucesso.");
+                            Erro = false;//caso encontre um assento disponivel
+                        }
+                        else if (cadeiras_Ocupadas[linha ][coluna ] == false) //caso a cadeira ja está alugada
+                        {
+                            System.out.println("Desculpe, mas a cadeira selecionada ja está livre.");
+                            Erro = false;//caso encontre um assento disponivel
+                        }
+                    }
+                }
+            }
+            if (Erro == true)//caso não encontre um assento disponivel
+            {
+                System.out.println("Desculpe, mas as coordenadas desejadas não existem, tente novamente.");
+            }
+        }
+    }
+}
